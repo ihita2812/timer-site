@@ -1,21 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Murder Mystery Control Panel</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <title>Murder Mystery Control Panel</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
+    
+    <div id="timer">60:00</div>
+    <div id="killCount">🔪 Kill Count: 1</div>
+    
+    <div class="buttons">
+        <button id="toggleBtn">Play</button>
+        <button id="clueBtn">Use Clue (-5 min)</button>
+        <button id="killBtn">Add Kill (+1)</button>
+        <button id="soundBtn">Play Murder Sound</button>
+    </div>
+    
+    <script src="script.js"></script>
 
-  <div id="timer">60:00</div>
-  <div id="killCount">🔪 Kill Count: 1</div>
-
-  <div class="buttons">
-    <button id="toggleBtn">Play</button>
-    <button id="clueBtn">Use Clue (-5 min)</button>
-    <button id="killBtn">Add Kill (+1)</button>
-  </div>
-
-  <script src="script.js"></script>
 </body>
 </html>
