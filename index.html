@@ -3,22 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <title>Murder Mystery Control Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nosifer&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-    
-    <div id="timer">60:00</div>
-    <div id="killCount">🔪 Kill Count: 1</div>
-    
-    <div class="buttons">
-        <button id="toggleBtn">Play</button>
-        <button id="clueBtn">Use Clue (-5 min)</button>
-        <button id="killBtn">Add Kill (+1)</button>
-        <button id="soundBtn">Play Murder Sound</button>
+
+    <!-- Start Game Text -->
+    <div id="start-text">Start Game</div>
+
+    <!-- Main game container -->
+    <div id="game-container">
+        <div id="timer-label" style="display:none;">Time left remaining:</div>
+        <div id="timer">60:00</div>
+        <div id="kill-count">KILL COUNT: <span id="killNumber">1</span></div>
     </div>
     
+    <!-- Button container at bottom -->
+    <div id="button-bar">
+        <!-- Buttons will go here; first one is the skull -->
+        <button class="game-btn" id="blackout-btn">
+            <img src="skull.png" alt="Blackout" />
+        </button>
+        <!-- Future buttons can be added here -->
+    </div>
+
+    <!-- Character list panel -->
+    <div id="character-list">
+        <h3>GUESTS</h3>
+        <ul>
+            <li>Chandan - </li>
+            <li>Nyasha - </li>
+            <li>Friend 1 - </li>
+            <li>Friend 2 - </li>
+            <li>Friend 3/plug - </li>
+            <li>Nyasha's mom - </li>
+            <li>Nyasha's dad - </li>
+            <li>Maid 1 - </li>
+            <li>Maid 2 - </li>
+            <li>Cook - </li>
+            <li>Gardener - </li>
+        </ul>
+    </div>
+
     <script src="script.js"></script>
 
 </body>
+
 </html>

@@ -1,104 +1,145 @@
-// --------------------
-// STATE
-// --------------------
-const GAME_DURATION_SECONDS = 60 * 60; // 60 minutes
-const CLUE_PENALTY_SECONDS = 5 * 60;
+document.addEventListener("DOMContentLoaded", () => {
 
-let totalSeconds = GAME_DURATION_SECONDS;
-let killCount = 1;
-let isRunning = false;
-let timerInterval = null;
+    // --------------------
+    // STATE
+    // --------------------
+    const GAME_DURATION_SECONDS = 60 * 60; // 60 minutes
+    const CLUE_PENALTY_SECONDS = 5 * 60;
 
-// --------------------
-// AUDIO
-// --------------------
-const murderSound = new Audio("sounds/murder-sound.mp3");
-murderSound.volume = 0.9; // tweak later
+    let totalSeconds = GAME_DURATION_SECONDS;
+    let killCount = 1;
+    let isRunning = false;
+    let isBlackout = false;
+    let timerInterval = null;
 
-// --------------------
-// DOM ELEMENTS
-// --------------------
-const timerDisplay = document.getElementById("timer");
-const killCountDisplay = document.getElementById("killCount");
+    // --------------------
+    // AUDIO
+    // --------------------
+    const killSound = new Audio("sounds/kill-sound.mp3");
+    killSound.volume = 0.9;
 
-const toggleBtn = document.getElementById("toggleBtn");
-const clueBtn = document.getElementById("clueBtn");
-const killBtn = document.getElementById("killBtn");
-const soundBtn = document.getElementById("soundBtn");
+    // --------------------
+    // DOM ELEMENTS
+    // --------------------
+    const startText = document.getElementById("start-text");
+    const timerLabel = document.getElementById("timer-label");
+    const timerDisplay = document.getElementById("timer");
+    const killNumber = document.getElementById("killNumber");
+    const blackoutBtn = document.getElementById("blackout-btn");
+    const characterItems = document.querySelectorAll("#character-list li");
+    const gameContainer = document.getElementById("game-container");
+    const buttonBar = document.getElementById("button-bar");
+    const charList = document.getElementById("character-list");
+    const body = document.body;
 
-// --------------------
-// UI UPDATE FUNCTIONS
-// --------------------
-function updateTimerDisplay() {
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    
-    timerDisplay.textContent = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-}
+    // --------------------
+    // HELPER FUNCTIONS
+    // --------------------
+    function formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${String(minutes).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+    }
 
-function updateKillCountDisplay() {
-    killCountDisplay.textContent = `🔪 Kill Count: ${killCount}`;
-}
+    function updateTimerDisplay() {
+        timerDisplay.textContent = formatTime(totalSeconds);
+    }
 
-// --------------------
-// TIMER CONTROL
-// --------------------
-function startTimer() {
-    timerInterval = setInterval(() => {
-        if (totalSeconds > 0) {
+    function updateKillCountDisplay() {
+        killNumber.textContent = killCount;
+    }
+
+    function playMurderSound() {
+        murderSound.currentTime = 0;
+        murderSound.play();
+    }
+
+    // --------------------
+    // TIMER CONTROL
+    // --------------------
+    function tick() {
+        if (!isBlackout && totalSeconds > 0) {
             totalSeconds--;
             updateTimerDisplay();
-        } else {
-            stopTimer();
         }
-    }, 1000);
-}
-
-function stopTimer() {
-    clearInterval(timerInterval);
-    isRunning = false;
-    toggleBtn.textContent = "Play";
-}
-
-function toggleTimer() {
-    if (isRunning) {
-        stopTimer();
-    } else {
-        startTimer();
-        toggleBtn.textContent = "Pause";
-        isRunning = true;
     }
-}
 
-// --------------------
-// GAME ACTIONS
-// --------------------
-function useClue() {
-    totalSeconds = Math.max(0, totalSeconds - CLUE_PENALTY_SECONDS);
+    function startTimer() {
+        if (!timerInterval) {
+            timerInterval = setInterval(tick, 1000);
+            isRunning = true;
+        }
+    }
+
+    function stopTimer() {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        isRunning = false;
+    }
+
+    // --------------------
+    // GAME ACTIONS
+    // --------------------
+    function useClue() {
+        totalSeconds = Math.max(0, totalSeconds - CLUE_PENALTY_SECONDS);
+        updateTimerDisplay();
+    }
+
+    function addKill() {
+        killCount++;
+        updateKillCountDisplay();
+        playMurderSound();
+    }
+
+    // --------------------
+    // BLACKOUT CONTROL
+    // --------------------
+    function triggerBlackout() {
+        isBlackout = true;
+        gameContainer.style.display = "none";  // hide all UI
+        buttonBar.style.display = "none";      // hide button bar
+        charList.style.display = "none";       // hide character list
+        body.style.background = "#000";        // black screen
+    }
+
+    function resumeAfterBlackout() {
+        isBlackout = false;
+        gameContainer.style.display = "flex";  // restore UI
+        buttonBar.style.display = "flex";      // restore button bar
+        charList.style.display = "block";      // restore character list
+        body.style.background = "";             // restore background
+    }
+
+    // --------------------
+    // EVENT LISTENERS
+    // --------------------
+    startText.addEventListener("click", () => {
+        startText.style.display = "none";
+        timerLabel.style.display = "block";  // show "Time left remaining:"
+        gameContainer.style.display = "flex"; // ensure visible
+        updateTimerDisplay();
+        startTimer();
+    });
+
+    if (blackoutBtn) blackoutBtn.addEventListener("click", triggerBlackout);
+
+    document.addEventListener("keydown", (e) => {
+        if (e.code === "Space" && isBlackout) {
+            resumeAfterBlackout();
+        }
+    });
+
+    characterItems.forEach(item => {
+        item.addEventListener("click", () => {
+            if (!item.classList.contains("dead")) {
+                item.classList.toggle("dead"); // triggers strike-through
+            }
+        });
+    });
+
+    // --------------------
+    // INITIAL RENDER
+    // --------------------
     updateTimerDisplay();
-}
-
-function addKill() {
-    killCount++;
     updateKillCountDisplay();
-    // playMurderSound();
-}
-
-function playMurderSound() {
-  murderSound.currentTime = 0; // allows rapid replays
-  murderSound.play();
-}
-
-// --------------------
-// EVENT LISTENERS
-// --------------------
-toggleBtn.addEventListener("click", toggleTimer);
-clueBtn.addEventListener("click", useClue);
-killBtn.addEventListener("click", addKill);
-soundBtn.addEventListener("click", playMurderSound);
-
-// --------------------
-// INITIAL RENDER
-// --------------------
-updateTimerDisplay();
-updateKillCountDisplay();
+});
