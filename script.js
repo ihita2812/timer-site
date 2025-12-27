@@ -26,6 +26,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const timerDisplay = document.getElementById("timer");
     const killNumber = document.getElementById("killNumber");
     const blackoutBtn = document.getElementById("blackout-btn");
+    const hintBtn = document.getElementById("hint-btn");
+    const killBtn = document.getElementById("kill-btn");
     const characterItems = document.querySelectorAll("#character-list li");
     const gameContainer = document.getElementById("game-container");
     const buttonBar = document.getElementById("button-bar");
@@ -122,6 +124,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     if (blackoutBtn) blackoutBtn.addEventListener("click", triggerBlackout);
+    if (hintBtn) hintBtn.addEventListener("click", useClue);
+    if (killBtn) killBtn.addEventListener("click", addKill);
 
     document.addEventListener("keydown", (e) => {
         if (e.code === "Space" && isBlackout) {
