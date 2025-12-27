@@ -3,32 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <title>Murder Mystery Control Panel</title>
-    <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nosifer&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
 
-    <!-- Start Game Text -->
     <div id="start-text">Start Game</div>
 
-    <!-- Main game container -->
     <div id="game-container">
         <div id="timer-label" style="display:none;">Time left remaining:</div>
         <div id="timer">60:00</div>
         <div id="kill-count">KILL COUNT: <span id="killNumber">1</span></div>
     </div>
     
-    <!-- Button container at bottom -->
     <div id="button-bar">
-        <!-- Buttons will go here; first one is the skull -->
         <button class="game-btn" id="blackout-btn">
             <img src="media/images/blackout.png" alt="Blackout" />
         </button>
@@ -38,10 +29,8 @@
         <button class="game-btn" id="kill-btn">
             <img src="media/images/murder.png" alt="When killed" />
         </button>
-        <!-- Future buttons can be added here -->
     </div>
 
-    <!-- Character list panel -->
     <div id="character-list">
         <h3>GUESTS</h3>
         <ul>

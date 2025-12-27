@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // --------------------
     // STATE
     // --------------------
-    const GAME_DURATION_SECONDS = 60 * 60; // 60 minutes
+    const GAME_DURATION_SECONDS = 60 * 60;
     const CLUE_PENALTY_SECONDS = 5 * 60;
 
     let totalSeconds = GAME_DURATION_SECONDS;
@@ -98,27 +98,60 @@ document.addEventListener("DOMContentLoaded", () => {
     // --------------------
     function triggerBlackout() {
         isBlackout = true;
-        gameContainer.style.display = "none";  // hide all UI
-        buttonBar.style.display = "none";      // hide button bar
-        charList.style.display = "none";       // hide character list
-        body.style.background = "#000";        // black screen
+        gameContainer.style.display = "none";
+        buttonBar.style.display = "none";
+        charList.style.display = "none";
+        body.style.background = "#000";
     }
 
     function resumeAfterBlackout() {
         isBlackout = false;
-        gameContainer.style.display = "flex";  // restore UI
-        buttonBar.style.display = "flex";      // restore button bar
-        charList.style.display = "block";      // restore character list
-        body.style.background = "";             // restore background
+        gameContainer.style.display = "flex";
+        buttonBar.style.display = "flex";
+        charList.style.display = "block";
+        body.style.background = "";
+    }
+
+    // --------------------
+    // FULLSCREEN TOGGLE
+    // --------------------
+    function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => {
+                console.error(`Error attempting fullscreen: ${err.message}`);
+            });
+        } else {
+            document.exitFullscreen();
+        }
     }
 
     // --------------------
     // EVENT LISTENERS
     // --------------------
+    document.addEventListener("keydown", (e) => {
+        if (e.code === "Space" && isBlackout) {
+            resumeAfterBlackout();
+        }
+    });
+
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "f" || e.key === "F") {
+            toggleFullscreen();
+        }
+    });
+
+    characterItems.forEach(item => {
+        item.addEventListener("click", () => {
+            if (!item.classList.contains("dead")) {
+                item.classList.toggle("dead");
+            }
+        });
+    });
+
     startText.addEventListener("click", () => {
         startText.style.display = "none";
-        timerLabel.style.display = "block";  // show "Time left remaining:"
-        gameContainer.style.display = "flex"; // ensure visible
+        timerLabel.style.display = "block";
+        gameContainer.style.display = "flex";
         updateTimerDisplay();
         startTimer();
     });
@@ -127,23 +160,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (hintBtn) hintBtn.addEventListener("click", useClue);
     if (killBtn) killBtn.addEventListener("click", addKill);
 
-    document.addEventListener("keydown", (e) => {
-        if (e.code === "Space" && isBlackout) {
-            resumeAfterBlackout();
-        }
-    });
-
-    characterItems.forEach(item => {
-        item.addEventListener("click", () => {
-            if (!item.classList.contains("dead")) {
-                item.classList.toggle("dead"); // triggers strike-through
-            }
-        });
-    });
-
     // --------------------
     // INITIAL RENDER
     // --------------------
     updateTimerDisplay();
     updateKillCountDisplay();
+    
 });
