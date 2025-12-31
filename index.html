@@ -11,22 +11,26 @@
 
 <body>
 
+    <!-- INTRO OVERLAY -->
     <div id="intro-overlay">
         <button id="intro-play-btn">▶</button>
     </div>
 
+    <!-- INTRO VIDEO -->
     <div id="intro-video-container" style="display: none;">
         <video id="intro-video" muted playsinline>
             <source src="media/videos/chandu-killed.mp4" type="video/mp4">
         </video>
     </div>
 
+    <!-- GAME UI -->
     <div id="game-container">
         <div id="timer-label" style="display:none;">Time left:</div>
         <div id="timer">60:00</div>
         <div id="kill-count">KILL COUNT: <span id="killNumber">0</span></div>
     </div>
     
+    <!-- BUTTON BAR -->
     <div id="button-bar">
         <button class="game-btn" id="blackout-btn">
             <img src="media/images/blackout.png" alt="Blackout" />
@@ -39,6 +43,7 @@
         </button>
     </div>
 
+    <!-- CHARACTER LIST -->
     <div id="character-list">
         <h3>GUESTS</h3>
         <ul>
@@ -59,5 +64,4 @@
     <script src="script.js"></script>
 
 </body>
-
 </html>

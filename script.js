@@ -217,14 +217,20 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     introPlayBtn.addEventListener("click", () => {
+        // hide overlay
         introOverlay.style.display = "none";
-        introVideoContainer.style.display = "flex";
-        introVideo.currentTime = 0;
-        introVideo.style.display = "block";
-        introVideo.play().catch(err => console.error("Video play failed:", err));
-        console.log("PLAY BUTTON CLICKED");
-    });
 
+        // show video container
+        introVideoContainer.style.display = "flex";
+
+        // reset video
+        introVideo.currentTime = 0;
+        introVideo.muted = true;
+        introVideo.style.display = "block";
+
+        // THIS is key: play() must be called **directly in this click handler**
+        introVideo.play().catch(err => console.error("Video play failed:", err));
+    });
 
     introVideo.addEventListener("ended", () => {
         introVideoContainer.style.display = "none";
