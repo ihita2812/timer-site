@@ -15,8 +15,16 @@ document.addEventListener("DOMContentLoaded", () => {
     // --------------------
     // AUDIO
     // --------------------
-    const killSound = new Audio("sounds/kill-sound.mp3");
+    const killSound = new Audio("media/sounds/kill-sound.mp3");
     killSound.volume = 0.9;
+
+    const bgSound = new Audio("media/sounds/bg.mp3");
+    bgSound.loop = true;
+    bgSound.volume = 0.4;
+
+    const endBuzzer = new Audio("media/sounds/end-buzzer.mp3");
+    endBuzzer.volume = 1.0;
+    endBuzzer.playbackRate = 0.95;
 
     // --------------------
     // DOM ELEMENTS
@@ -69,9 +77,22 @@ document.addEventListener("DOMContentLoaded", () => {
         killNumber.textContent = killCount;
     }
 
-    function playMurderSound() {
-        murderSound.currentTime = 0;
-        murderSound.play();
+    function playkillSound() {
+        killSound.currentTime = 0;
+        killSound.play();
+    }
+
+    function fadeInBgSound() {
+        bgSound.volume = 0;
+        bgSound.play();
+
+        const fade = setInterval(() => {
+            if (bgSound.volume < 0.4) {
+                bgSound.volume += 0.02;
+            } else {
+                clearInterval(fade);
+            }
+        }, 100);
     }
 
     // --------------------
@@ -82,12 +103,25 @@ document.addEventListener("DOMContentLoaded", () => {
             totalSeconds--;
             updateTimerDisplay();
         }
+
+        if (totalSeconds === 0) {
+            stopTimer();
+
+            bgSound.pause();
+            bgSound.currentTime = 0;
+
+            endBuzzer.currentTime = 0;
+            endBuzzer.play();
+        }
     }
 
     function startTimer() {
         if (!timerInterval) {
             timerInterval = setInterval(tick, 1000);
             isRunning = true;
+            if (bgSound.paused) {
+                fadeInBgSound();
+            }
         }
     }
 
@@ -108,7 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function addKill() {
         killCount++;
         updateKillCountDisplay();
-        playMurderSound();
+        playkillSound();
     }
 
     // --------------------
