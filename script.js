@@ -144,6 +144,9 @@ document.addEventListener("DOMContentLoaded", () => {
         item.addEventListener("click", () => {
             if (!item.classList.contains("dead")) {
                 item.classList.toggle("dead");
+                addKill();
+            } else {
+                item.classList.toggle("dead");
             }
         });
     });
