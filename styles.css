@@ -11,6 +11,53 @@
     100% { transform: translateY(2px); }
 }
 
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+/* -------------------------------------------------------------------------------------------------------------------------------------------- */
+
+#intro-overlay {
+    position: fixed;
+    inset: 0;
+    background: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 200;
+}
+
+#intro-play-btn {
+    font-size: 10vh;
+    background: none;
+    border: none;
+    color: #ff2e2e;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+#intro-play-btn:hover {
+    transform: scale(1.1);
+    opacity: 0.8;
+}
+
+#intro-video-container {
+    position: fixed;
+    inset: 0;
+    background: black;
+    z-index: 150;
+    animation: fadeOut 0.8s ease forwards;
+}
+
+#intro-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 /* -------------------------------------------------------------------------------------------------------------------------------------------- */
 
 body {

@@ -35,6 +35,24 @@ document.addEventListener("DOMContentLoaded", () => {
     const body = document.body;
 
     // --------------------
+    // INTRO VIDEO LOGIC
+    // --------------------
+    const introOverlay = document.getElementById("intro-overlay");
+    const introPlayBtn = document.getElementById("intro-play-btn");
+    const introVideoContainer = document.getElementById("intro-video-container");
+    const introVideo = document.getElementById("intro-video");
+
+    gameContainer.style.display = "none";
+    buttonBar.style.display = "none";
+    characterList.style.display = "none";
+
+    introPlayBtn.addEventListener("click", () => {
+        introOverlay.style.display = "none";
+        introVideoContainer.style.display = "block";
+        introVideo.play();
+    });
+
+    // --------------------
     // HELPER FUNCTIONS
     // --------------------
     function formatTime(seconds) {
@@ -129,14 +147,22 @@ document.addEventListener("DOMContentLoaded", () => {
     // EVENT LISTENERS
     // --------------------
     document.addEventListener("keydown", (e) => {
-        if (e.code === "Space" && isBlackout) {
-            resumeAfterBlackout();
-        }
-    });
-
-    document.addEventListener("keydown", (e) => {
         if (e.key === "f" || e.key === "F") {
             toggleFullscreen();
+        }
+        
+        if (e.code === "Space" && !introVideo.ended && introVideoContainer.style.display === "block") {
+            e.preventDefault();
+
+            if (introVideo.paused) {
+                introVideo.play();
+            } else {
+                introVideo.pause();
+            }
+        }
+
+        if (e.code === "Space" && isBlackout) {
+            resumeAfterBlackout();
         }
     });
 
@@ -151,13 +177,25 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    startText.addEventListener("click", () => {
-        startText.style.display = "none";
-        timerLabel.style.display = "block";
+    // startText.addEventListener("click", () => {
+    //     startText.style.display = "none";
+    //     timerLabel.style.display = "block";
+    //     gameContainer.style.display = "flex";
+    //     updateTimerDisplay();
+    //     startTimer();
+    // });
+
+    introVideo.addEventListener("ended", () => {
+        introVideoContainer.style.display = "none";
+
         gameContainer.style.display = "flex";
+        buttonBar.style.display = "flex";
+        characterList.style.display = "block";
+
         updateTimerDisplay();
         startTimer();
     });
+
 
     if (blackoutBtn) blackoutBtn.addEventListener("click", triggerBlackout);
     if (hintBtn) hintBtn.addEventListener("click", useClue);
