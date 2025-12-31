@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const CLUE_PENALTY_SECONDS = 5 * 60;
 
     let totalSeconds = GAME_DURATION_SECONDS;
-    let killCount = 1;
+    let killCount = 0;
     let isRunning = false;
     let isBlackout = false;
     let timerInterval = null;
@@ -15,50 +15,38 @@ document.addEventListener("DOMContentLoaded", () => {
     // --------------------
     // AUDIO
     // --------------------
-    const killSound = new Audio("media/sounds/kill-sound.mp3");
+    const killSound = new Audio("media/sounds/kill-sound.mov");
     killSound.volume = 0.9;
 
     const bgSound = new Audio("media/sounds/bg.mp3");
     bgSound.loop = true;
     bgSound.volume = 0.4;
 
-    const endBuzzer = new Audio("media/sounds/end-buzzer.mp3");
+    const endBuzzer = new Audio("media/sounds/end-buzzer.mov");
     endBuzzer.volume = 1.0;
-    endBuzzer.playbackRate = 0.95;
+    endBuzzer.playbackRate = 0.9;
 
     // --------------------
     // DOM ELEMENTS
     // --------------------
-    const startText = document.getElementById("start-text");
-    const timerLabel = document.getElementById("timer-label");
     const timerDisplay = document.getElementById("timer");
     const killNumber = document.getElementById("killNumber");
+
     const blackoutBtn = document.getElementById("blackout-btn");
     const hintBtn = document.getElementById("hint-btn");
     const killBtn = document.getElementById("kill-btn");
+
     const characterItems = document.querySelectorAll("#character-list li");
+    const charList = document.getElementById("character-list");
+
     const gameContainer = document.getElementById("game-container");
     const buttonBar = document.getElementById("button-bar");
-    const charList = document.getElementById("character-list");
     const body = document.body;
 
-    // --------------------
-    // INTRO VIDEO LOGIC
-    // --------------------
     const introOverlay = document.getElementById("intro-overlay");
     const introPlayBtn = document.getElementById("intro-play-btn");
     const introVideoContainer = document.getElementById("intro-video-container");
     const introVideo = document.getElementById("intro-video");
-
-    gameContainer.style.display = "none";
-    buttonBar.style.display = "none";
-    characterList.style.display = "none";
-
-    introPlayBtn.addEventListener("click", () => {
-        introOverlay.style.display = "none";
-        introVideoContainer.style.display = "block";
-        introVideo.play();
-    });
 
     // --------------------
     // HELPER FUNCTIONS
@@ -77,7 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
         killNumber.textContent = killCount;
     }
 
-    function playkillSound() {
+    function playKillSound() {
         killSound.currentTime = 0;
         killSound.play();
     }
@@ -95,6 +83,24 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 100);
     }
 
+    function playBuzzerNTimes(times) {
+        let count = 0;
+
+        endBuzzer.currentTime = 0;
+        endBuzzer.play();
+
+        endBuzzer.onended = () => {
+            count++;
+
+            if (count < times) {
+                endBuzzer.currentTime = 0;
+                endBuzzer.play();
+            } else {
+                endBuzzer.onended = null; // cleanup
+            }
+        };
+    }
+
     // --------------------
     // TIMER CONTROL
     // --------------------
@@ -110,8 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
             bgSound.pause();
             bgSound.currentTime = 0;
 
-            endBuzzer.currentTime = 0;
-            endBuzzer.play();
+            playBuzzerNTimes(3);
         }
     }
 
@@ -119,6 +124,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!timerInterval) {
             timerInterval = setInterval(tick, 1000);
             isRunning = true;
+
             if (bgSound.paused) {
                 fadeInBgSound();
             }
@@ -142,7 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function addKill() {
         killCount++;
         updateKillCountDisplay();
-        playkillSound();
+        playKillSound();
     }
 
     // --------------------
@@ -150,17 +156,21 @@ document.addEventListener("DOMContentLoaded", () => {
     // --------------------
     function triggerBlackout() {
         isBlackout = true;
+
         gameContainer.style.display = "none";
         buttonBar.style.display = "none";
         charList.style.display = "none";
+
         body.style.background = "#000";
     }
 
     function resumeAfterBlackout() {
         isBlackout = false;
+
         gameContainer.style.display = "flex";
         buttonBar.style.display = "flex";
         charList.style.display = "block";
+
         body.style.background = "";
     }
 
@@ -170,7 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function toggleFullscreen() {
         if (!document.fullscreenElement) {
             document.documentElement.requestFullscreen().catch(err => {
-                console.error(`Error attempting fullscreen: ${err.message}`);
+                console.error("Fullscreen error:", err);
             });
         } else {
             document.exitFullscreen();
@@ -181,55 +191,60 @@ document.addEventListener("DOMContentLoaded", () => {
     // EVENT LISTENERS
     // --------------------
     document.addEventListener("keydown", (e) => {
+
+        // Fullscreen
         if (e.key === "f" || e.key === "F") {
             toggleFullscreen();
-        }
-        
-        if (e.code === "Space" && !introVideo.ended && introVideoContainer.style.display === "block") {
-            e.preventDefault();
-
-            if (introVideo.paused) {
-                introVideo.play();
-            } else {
-                introVideo.pause();
-            }
+            return;
         }
 
+        // Resume from blackout
         if (e.code === "Space" && isBlackout) {
+            e.preventDefault();
             resumeAfterBlackout();
+            return;
+        }
+
+        // Pause / play intro video
+        if (
+            e.code === "Space" &&
+            introVideoContainer.style.display === "block" &&
+            !introVideo.ended
+        ) {
+            e.preventDefault();
+            introVideo.paused ? introVideo.play() : introVideo.pause();
         }
     });
 
-    characterItems.forEach(item => {
-        item.addEventListener("click", () => {
-            if (!item.classList.contains("dead")) {
-                item.classList.toggle("dead");
-                addKill();
-            } else {
-                item.classList.toggle("dead");
-            }
-        });
+    introPlayBtn.addEventListener("click", () => {
+        introOverlay.style.display = "none";
+        introVideoContainer.style.display = "flex";
+        introVideo.currentTime = 0;
+        introVideo.style.display = "block";
+        introVideo.play().catch(err => console.error("Video play failed:", err));
+        console.log("PLAY BUTTON CLICKED");
     });
 
-    // startText.addEventListener("click", () => {
-    //     startText.style.display = "none";
-    //     timerLabel.style.display = "block";
-    //     gameContainer.style.display = "flex";
-    //     updateTimerDisplay();
-    //     startTimer();
-    // });
 
     introVideo.addEventListener("ended", () => {
         introVideoContainer.style.display = "none";
 
         gameContainer.style.display = "flex";
         buttonBar.style.display = "flex";
-        characterList.style.display = "block";
+        charList.style.display = "block";
 
         updateTimerDisplay();
         startTimer();
     });
 
+    characterItems.forEach(item => {
+        item.addEventListener("click", () => {
+            if (!item.classList.contains("dead")) {
+                item.classList.add("dead");
+                addKill();
+            }
+        });
+    });
 
     if (blackoutBtn) blackoutBtn.addEventListener("click", triggerBlackout);
     if (hintBtn) hintBtn.addEventListener("click", useClue);
@@ -238,7 +253,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // --------------------
     // INITIAL RENDER
     // --------------------
+    gameContainer.style.display = "none";
+    buttonBar.style.display = "none";
+    charList.style.display = "none";
+
     updateTimerDisplay();
     updateKillCountDisplay();
-    
+
 });
